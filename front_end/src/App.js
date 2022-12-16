@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import Discover from './components/Discover';
+import Library from './components/Library';
 
 function App() {
   const [allBooks, setAllBooks] = useState([]);
@@ -47,10 +48,10 @@ function App() {
             </Center>
             <TabPanels>
               <TabPanel>
-                <Discover refreshData={fetchData}/>
+                <Discover refreshData={fetchData} />
               </TabPanel>
               <TabPanel>
-                <p>Hello Library</p>
+                <Library allBooks={allBooks} refreshData={fetchData} />
               </TabPanel>
             </TabPanels>
           </Tabs>
