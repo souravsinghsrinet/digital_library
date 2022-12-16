@@ -31,6 +31,34 @@ export default function Discover({ refreshData }) {
         .then((data) => setSearchResults(data["items"]));
     };
 
+    const addBook = (book) => {
+        const body = JSON.stringify({
+            volume_id: book.id,
+            title: book.volumeInfo.title,
+            authors: book.volumeInfo.authors?.join(", "),
+            thumbnail: book.volumeInfo.imageLinks?.thumbnail,
+            state: 2,
+        })
+
+        fetch("http://127.0.0.1:8000/books", {
+            method: "POST", 
+            headers: {
+                Accept: "application/json", 
+                "Content-Type": "application/json",
+            },
+            body: body
+        }).then(response => response.json()).then(data => {
+            refreshData();
+            bookAddedToast({
+                title: "Added",
+                description: "Book added to wishlish",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+        });
+    }
+
     return (
         <VStack spacing={7} paddingTop={5}>
             <Heading size="lg"> Search Books</Heading>
@@ -57,6 +85,33 @@ export default function Discover({ refreshData }) {
                                 <Badge borderRadius="full" px="2" colorScheme="teal">
                                     {book.volumeInfo.categories?.join(", ")}
                                 </Badge>
+                                <VStack>
+                                    <Badge colorScheme="red">
+                                        Google Rating:{" "}
+                                        {
+                                            book.volumeInfo.averageRating? book.volumeInfo.averageRating:"N/A"
+                                        }
+                                    </Badge>
+                                    <Text align="center">
+                                        Author: {book.volumeInfo.authors?.join(", ")}
+                                    </Text>
+                                </VStack>
+                                <VStack>
+                                    <Heading size="md">{book.volumeInfo.title}</Heading>
+                                    <Text padding={3} color="grey">
+                                        {
+                                            book.searchInfo?.textSnippet? book.searchInfo?.textSnippet:book.volumeInfo.subtitle
+                                        }
+                                    </Text>
+                                    <Center paddingBottom={2}>
+                                        <Button variant="outline" onClick={() => addBook(book)}>
+                                            <HStack>
+                                                <AddIcon w={4} h={4} color="red.500" />
+                                                <Text>Add Book</Text>
+                                            </HStack>
+                                        </Button>
+                                    </Center>
+                                </VStack>
                             </VStack>
                         )
                     })
